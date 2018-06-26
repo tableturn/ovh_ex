@@ -17,7 +17,8 @@ defmodule Ovh.MixProject do
       mod: {Ovh.App, []},
       env: [
         app_key: "miNfxN9LqMJQPjCy",
-        app_secret: ""        
+        app_secret: "",
+        expires: 300_000
       ],
       extra_applications: [:logger, :inets, :ssl]
     ]

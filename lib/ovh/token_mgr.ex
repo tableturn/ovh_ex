@@ -4,15 +4,14 @@ defmodule Ovh.TokenMgr do
   """
   require Logger
 
-  @expires 60_000
-
-  defstruct tokens: %{}, timers: %{}
+  defstruct tokens: %{}, timers: %{}, expires: 60_000
   
   @doc false
   def child_spec(_) do
+    state0 = %__MODULE__{ expires: Application.get_env(:ovh, :expires, 60_000) }
     %{
       id: __MODULE__,
-      start: {Agent, :start_link, [fn -> %__MODULE__{} end, [name: __MODULE__]]}
+      start: {Agent, :start_link, [fn -> state0 end, [name: __MODULE__]]}
     }
   end
 
@@ -22,7 +21,7 @@ defmodule Ovh.TokenMgr do
   @spec register(Ovh.Token.t) :: Ovh.Token.t
   def register(token) do
     Agent.get_and_update(__MODULE__, fn s ->
-      {:ok, tref} = :timer.apply_after(@expires, __MODULE__, :expires, [token.id])
+      {:ok, tref} = :timer.apply_after(s.expires, __MODULE__, :expires, [token.id])
       s = %{
         tokens: Map.put(s.tokens, token.id, token),
         timers: Map.put(s.timers, token.id, tref)

@@ -3,19 +3,28 @@ defmodule Ovh.Token do
   Describe token
   """
 
-  @type state :: :pending_validation
+  @type id :: String.t
+  @type state :: :pending_validation | :validated
   @type t :: %__MODULE__{}
 
-  defstruct validation_url: "", consumer_key: "", state: nil
+  defstruct validation_url: "", consumer_key: "", state: nil, id: ""
 
   @doc """
-  Creates token from map returned by auth url
+  Creates token from map returned by auth url + internal id (uuid)
   """
-  def new(data) do
+  def new(data, id) do
     %__MODULE__{
       validation_url: data["validationUrl"],
       consumer_key: data["consumerKey"],
-      state: data["state"]
+      state: data["state"],
+      id: id
     }
+  end
+
+  @doc """
+  Set state
+  """
+  def set_state(token, state) when state in [:pending_validation, :validated] do
+    %{token | state: state}
   end
 end

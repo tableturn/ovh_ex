@@ -14,17 +14,21 @@ defmodule Ovh.MixProject do
   # Run "mix help compile.app" to learn about applications.
   def application do
     [
+      mod: {Ovh.App, []},
       env: [
         app_key: "miNfxN9LqMJQPjCy",
-        app_secret: ""
+        app_secret: ""        
       ],
-      extra_applications: [:logger]
+      extra_applications: [:logger, :inets, :ssl]
     ]
   end
 
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
+      {:plug, "~> 1.6"},
+      {:cowboy, "~> 1.0"},
+      {:uuid, "~> 1.1"},
       {:poison, "~> 3.1"}
     ]
   end

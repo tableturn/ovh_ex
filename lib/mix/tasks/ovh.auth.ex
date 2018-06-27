@@ -16,7 +16,7 @@ defmodule Mix.Tasks.Ovh.Auth do
       Mix.shell.info("\t#{method} #{path}")
     end)
 
-    {:ok, token} = Mix.Ovh.token([{"GET", "/*"}])
+    {:ok, token} = Mix.Ovh.token(rules)
 
     Mix.shell.info "2 - Validate token going to: #{token.validation_url}"
     Mix.shell.info "3 - Waiting for validation..."

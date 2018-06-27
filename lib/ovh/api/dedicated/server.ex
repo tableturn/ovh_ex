@@ -4,7 +4,7 @@ defmodule Ovh.Api.Dedicated.Server do
   """
   use Ovh.Api
 
-  def get_all, do: do_get("/dedicated/server")
+  def get, do: do_get("/dedicated/server")
 
   def get(server), do: do_get("/dedicated/server/#{server}")
 

@@ -21,31 +21,17 @@ defmodule Ovh.Api do
   end
 
   def do_get(path, http_opts \\ [], opts \\ []) do
-    case do_request(:get, path, "", http_opts, opts) do
-      {:ok, {{_, 200, _}, _, body}} ->
-        {:ok, Poison.decode!(body)}
-
-      {:ok, {{_, code, reason}, _, _}} ->
-        {:error, {code, reason}}
-
-      {:error, err} ->
-        {:error, err}
-    end
+    do_request(:get, path, nil, http_opts, opts)
   end
 
   def do_put(path, props, http_opts \\ [], opts \\ []) do
     body = props |> Poison.encode!()
+    do_request(:put, path, body, http_opts, opts)
+  end
 
-    case do_request(:post, path, body, http_opts, opts) do
-      {:ok, {{_, 200, _}, _, body}} ->
-        {:ok, Poison.decode!(body)}
-
-      {:ok, {{_, code, reason}, _, _}} ->
-        {:error, {code, reason}}
-
-      {:error, err} ->
-        {:error, err}
-    end
+  def do_post(path, props, http_opts \\ [], opts \\ []) do
+    body = props |> Poison.encode!()
+    do_request(:post, path, body, http_opts, opts)
   end
 
   ###
@@ -57,17 +43,38 @@ defmodule Ovh.Api do
 
     req =
       cond do
-        body == "" ->
+        body == nil ->
           {'#{query}', headers}
 
         true ->
           {'#{query}', headers, 'application/json', body}
       end
 
-    :httpc.request(method, req, http_opts, opts)
+    case :httpc.request(method, req, http_opts, opts) do
+      {:ok, {{_, 200, _}, _, ''}} ->
+        {:ok, %{}}
+
+      {:ok, {{_, 200, _}, _, body}} ->
+        {:ok, Poison.decode!(body)}
+
+      {:ok, {{_, code, reason}, _, _}} ->
+        {:error, {code, reason}}
+
+      {:error, err} ->
+        {:error, err}
+    end
   end
 
   defp ovh_headers(method, query, body) do
+    body =
+      cond do
+        body == nil ->
+          ""
+
+        true ->
+          body
+      end
+
     method = String.upcase("#{method}")
     ak = Confex.get_env(:ovh, :app_key)
     as = Confex.get_env(:ovh, :app_secret)

@@ -27,9 +27,12 @@ defmodule Ovh.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:plug, "~> 1.6"},
-      {:cowboy, "~> 1.0"},
-      {:uuid, "~> 1.1"},
+      # Only dev
+      {:plug, "~> 1.6", only: [:dev]},
+      {:cowboy, "~> 1.0", only: [:dev]},
+      {:uuid, "~> 1.1", only: [:dev]},
+      # All envs
+      {:confex, "~> 3.3"},
       {:poison, "~> 3.1"}
     ]
   end

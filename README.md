@@ -1,21 +1,30 @@
 # OvhEx
 
-**TODO: Add description**
+OvhEx is a wrapper on OVH API
 
-## Installation
+## Creates a customer key
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `ovh_ex` to your list of dependencies in `mix.exs`:
+First, you need a consumer key. For this, you can use the `mix ovh.auth` task.
 
-```elixir
-def deps do
-  [
-    {:ovh_ex, "~> 0.1.0"}
-  ]
-end
+For instance, for a consumer key allowed to read all routes and PUT on
+`/me` route:
+
+``` shell
+mix ovh.auth 'GET /*' 'PUT /me'
 ```
 
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at [https://hexdocs.pm/ovh_ex](https://hexdocs.pm/ovh_ex).
+See `https://api.ovh.com/console/#/auth/credential#POST` for more
+details about rules.
 
+Once the key is validated, you should export it in `OVH_CONSUMER_KEY`
+env var:
+
+``` shell
+export OVH_CONSUMER_KEY=abcdef12345
+```
+
+## TODO
+
+* Implements all calls
+* Use some kind of translator between doc and Elixir code (should
+  achieve first point)

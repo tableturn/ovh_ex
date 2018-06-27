@@ -2,11 +2,11 @@ defmodule Mix.Ovh do
   @moduledoc """
   Commons for Ovh.Auth task
   """
-  @type rule :: {method :: String.t, path :: String.t}
+  @type rule :: {method :: String.t(), path :: String.t()}
 
   defmodule Token do
     @type t :: %__MODULE__{}
-    
+
     defstruct validation_url: "", consumer_key: ""
 
     def new(data) do
@@ -41,30 +41,32 @@ defmodule Mix.Ovh do
     end
 
     def init(pid) do
-      {:ok, %{ pid: pid, token: nil, id: nil }}
+      {:ok, %{pid: pid, token: nil, id: nil}}
     end
 
     def handle_call({:set, token, id}, _from, s) do
-      {:reply, token, %{ s | token: token, id: id }}
+      {:reply, token, %{s | token: token, id: id}}
     end
-    
-    def handle_call({:validate, id}, _from, %{ id: id, pid: pid }=s) do
+
+    def handle_call({:validate, id}, _from, %{id: id, pid: pid} = s) do
       send(pid, :token_validated)
       {:reply, {:ok, s.token}, s}
     end
+
     def handle_call(_, _from, s), do: {:reply, :error, s}
   end
 
   defmodule Http do
     use Plug.Router
 
-    plug :match
-    plug :dispatch
-    
+    plug(:match)
+    plug(:dispatch)
+
     get "/" do
       conn = Plug.Conn.fetch_query_params(conn)
+
       with token_id when is_binary(token_id) <- conn.params["id"],
-        {:ok, token} = Manager.validate(token_id) do
+           {:ok, token} = Manager.validate(token_id) do
         send_resp(conn, 200, "OK. Consumer key: #{token.consumer_key}\n")
       else
         _ ->
@@ -76,7 +78,7 @@ defmodule Mix.Ovh do
       send_resp(conn, 404, "NOT FOUND\n")
     end
   end
-  
+
   @url_auth "https://eu.api.ovh.com/1.0/auth/credential"
   @port 3142
 
@@ -86,12 +88,13 @@ defmodule Mix.Ovh do
   @spec start() :: :ok
   def start() do
     {:ok, _} = Application.ensure_all_started(:cowboy)
-    :ok = Application.load(:ovh)    
+    :ok = Application.load(:ovh)
 
     children = [
       {Manager, self()},
       {Plug.Adapters.Cowboy, scheme: :http, plug: Http, options: [port: @port]}
     ]
+
     {:ok, _} = Supervisor.start_link(children, strategy: :one_for_one)
     :ok
   end
@@ -99,27 +102,31 @@ defmodule Mix.Ovh do
   @doc """
   Get a token
   """
-  @spec token([rule]) :: {:ok, Token.t} | {:error, term}
+  @spec token([rule]) :: {:ok, Token.t()} | {:error, term}
   def token(rules \\ [{"GET", "/*"}]) do
-    access_rules = Enum.map(rules, fn {method, path} ->
-      %{ "method" => method, "path" => path}
-    end)
+    access_rules =
+      Enum.map(rules, fn {method, path} ->
+        %{"method" => method, "path" => path}
+      end)
+
     id = UUID.uuid4()
     redirection = "http://0.0.0.0:#{@port}/?id=#{id}"
-    
-    req_body = %{ "accessRules" => access_rules, "redirection" => redirection }
+
+    req_body = %{"accessRules" => access_rules, "redirection" => redirection}
 
     app_key = Confex.get_env(:ovh, :app_key, "")
     headers = [{'X-Ovh-Application', '#{app_key}'}]
 
     case req(:post, @url_auth, headers, req_body) do
       {:ok, {{_, 200, _}, _, body}} ->
-        token = body
-        |> Poison.decode!()
-        |> Token.new()
-        |> Manager.set(id)
+        token =
+          body
+          |> Poison.decode!()
+          |> Token.new()
+          |> Manager.set(id)
+
         {:ok, token}
-        
+
       {:ok, {{_, code, err}, _, _}} ->
         {:error, {code, err}}
 

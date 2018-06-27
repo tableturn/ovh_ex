@@ -27,7 +27,10 @@ defmodule Mix.Tasks.Ovh.Auth do
   end
 
   defp parse_args!(args) do
-    args |> Enum.map(&parse_rule!/1)
+    case Enum.map(args, &parse_rule!/1) do
+      [] -> usage(11)
+      rules -> rules
+    end
   end
 
   defp parse_rule!(rule) do

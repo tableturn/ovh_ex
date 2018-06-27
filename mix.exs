@@ -14,13 +14,8 @@ defmodule Ovh.MixProject do
   # Run "mix help compile.app" to learn about applications.
   def application do
     [
-      mod: {Ovh.App, []},
-      env: [
-        app_key: "miNfxN9LqMJQPjCy",
-        app_secret: "",
-        expires: 300_000
-      ],
-      extra_applications: [:logger, :inets, :ssl]
+      env: [],
+      extra_applications: [:logger, :ssl]
     ]
   end
 

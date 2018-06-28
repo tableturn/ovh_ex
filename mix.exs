@@ -58,21 +58,7 @@ defmodule Ovh.MixProject do
     [
       main: "Ovh",
       source_url: "https://github.com/the-missing-link/ovh_ex",
-      extras: ["README.md"],
-      groups_for_modules: [
-        "High-level API": [
-          Ovh,
-          Ovh.Api,
-          Ovh.Server
-        ],
-        "Low-level API": [
-          Ovh.Api.Dedicated.Server,
-          Ovh.Api.Dedicated.Server.AuthenticationSecret,
-          Ovh.Api.Dedicated.Server.Boot,
-          Ovh.Api.Dedicated.Server.Boot.Option,
-          Ovh.Api.Dedicated.Server.Reboot
-        ]
-      ]
+      extras: ["README.md"]
     ]
   end
 end

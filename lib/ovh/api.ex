@@ -42,11 +42,11 @@ defmodule Ovh.Api do
     headers = ovh_headers(method, query, body)
 
     req =
-      cond do
-        body == nil ->
+      case body do
+        nil ->
           {'#{query}', headers}
 
-        true ->
+        _ ->
           {'#{query}', headers, 'application/json', body}
       end
 
@@ -67,11 +67,10 @@ defmodule Ovh.Api do
 
   defp ovh_headers(method, query, body) do
     body =
-      cond do
-        body == nil ->
+      case body do
+        nil ->
           ""
-
-        true ->
+        _ ->
           body
       end
 
@@ -114,7 +113,7 @@ defmodule Ovh.Api do
     with {:ok, {{_, 200, _}, _, body}} <- :httpc.request('#{url}'),
          {ovh_time, _} <- Integer.parse("#{body}") do
       delta = ovh_time - :os.system_time(:seconds)
-      Logger.debug("Fetch OVH time: #{ovh_time} (delta: #{delta})")
+      Logger.debug(fn -> "Fetch OVH time: #{ovh_time} (delta: #{delta})" end)
       Application.put_env(:ovh, :delta_time, delta)
       delta
     else

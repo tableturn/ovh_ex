@@ -8,6 +8,7 @@ defmodule Ovh.MixProject do
       elixir: "~> 1.6",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
+      package: package(),
 
       # Docs
       name: "ovh.ex",
@@ -22,6 +23,17 @@ defmodule Ovh.MixProject do
     [
       env: [],
       extra_applications: [:logger, :ssl]
+    ]
+  end
+
+  defp package do
+    [
+      name: :ovh,
+      maintainers: ["Jean Parpaillon"],
+      licenses: ["Apache 2.0"],
+      links: %{
+        "GitHub" => "https://github.com/the-missing-link/ovh_ex"
+      }
     ]
   end
 

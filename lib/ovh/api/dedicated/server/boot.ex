@@ -1,5 +1,6 @@
 defmodule Ovh.Api.Dedicated.Server.Boot do
   @moduledoc """
+  https://api.ovh.com/console/#/dedicated/server/{serviceName}/boot#GET
   """
   use Ovh.Api
 

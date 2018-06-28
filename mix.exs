@@ -7,6 +7,9 @@ defmodule Ovh.MixProject do
       version: "0.0.1",
       elixir: "~> 1.6",
       start_permanent: Mix.env() == :prod,
+      aliases: [
+        compile: ["format", "compile", "credo"]
+      ],
       deps: deps(),
       package: package(),
 

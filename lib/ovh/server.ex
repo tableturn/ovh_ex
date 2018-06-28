@@ -56,7 +56,7 @@ defmodule Ovh.Server do
   def find(name_or_reverse) when is_binary(name_or_reverse) do
     try do
       name_or_reverse
-      |> Api.get("/dedicated/server")
+      |> Api.get()
       |> new()
       |> to_list()
     rescue
@@ -78,12 +78,12 @@ defmodule Ovh.Server do
   end
 
   def find(props) when is_list(props) do
-    # credo:disable-for-next-line
-    Api.get("/dedicated/server")
+    "/dedicated/server"
+    |> Api.get()
     |> Enum.reduce([], fn service, acc ->
       service
       |> Enum.map(&"/dedicated/server/#{&1}")
-      |> Api.Dedicated.Server.get()
+      |> Api.get()
       |> filter(props)
       |> add_non_nil(acc)
     end)
@@ -97,12 +97,12 @@ defmodule Ovh.Server do
   """
   @spec first(Keyword.t()) :: [t]
   def first(props) do
-    # credo:disable-for-next-line
     server =
-      Api.Dedicated.Server.get()
+      "/dedicated/server"
+      |> Api.get()
       |> Enum.find_value(
         nil,
-        &("/dedicated/server/#{&1}" |> Api.Dedicated.Server.get() |> filter(props))
+        &("/dedicated/server/#{&1}" |> Api.get() |> filter(props))
       )
       |> new()
 

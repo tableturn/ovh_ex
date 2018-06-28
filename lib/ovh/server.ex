@@ -56,7 +56,7 @@ defmodule Ovh.Server do
   def find(name_or_reverse) when is_binary(name_or_reverse) do
     try do
       name_or_reverse
-      |> Api.Dedicated.Server.get()
+      |> Api.get("/dedicated/server")
       |> new()
       |> to_list()
     rescue
@@ -79,9 +79,10 @@ defmodule Ovh.Server do
 
   def find(props) when is_list(props) do
     # credo:disable-for-next-line
-    Api.Dedicated.Server.get()
+    Api.get("/dedicated/server")
     |> Enum.reduce([], fn service, acc ->
       service
+      |> Enum.map(&"/dedicated/server/#{&1}")
       |> Api.Dedicated.Server.get()
       |> filter(props)
       |> add_non_nil(acc)
@@ -96,10 +97,13 @@ defmodule Ovh.Server do
   """
   @spec first(Keyword.t()) :: [t]
   def first(props) do
+    # credo:disable-for-next-line
     server =
-      # credo:disable-for-next-line
       Api.Dedicated.Server.get()
-      |> Enum.find_value(nil, &(&1 |> Api.Dedicated.Server.get() |> filter(props)))
+      |> Enum.find_value(
+        nil,
+        &("/dedicated/server/#{&1}" |> Api.Dedicated.Server.get() |> filter(props))
+      )
       |> new()
 
     if server do
@@ -113,7 +117,7 @@ defmodule Ovh.Server do
   Reboot server
   """
   @spec reboot(t) :: :ok
-  def reboot(server), do: Api.Dedicated.Server.Reboot.post(server.name)
+  def reboot(server), do: Api.post("/dedicated/server/#{server.name}/reboot", %{})
 
   ###
   ### Priv

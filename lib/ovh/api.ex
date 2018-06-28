@@ -52,16 +52,16 @@ defmodule Ovh.Api do
 
     case :httpc.request(method, req, http_opts, opts) do
       {:ok, {{_, 200, _}, _, ''}} ->
-        {:ok, %{}}
+        :ok
 
       {:ok, {{_, 200, _}, _, body}} ->
-        {:ok, Poison.decode!(body)}
+        Poison.decode!(body)
 
       {:ok, {{_, code, reason}, _, _}} ->
-        {:error, {code, reason}}
+        raise Ovh.Exception, {code, reason}
 
       {:error, err} ->
-        {:error, err}
+        raise Ovh.Exception, {:internal, err}
     end
   end
 

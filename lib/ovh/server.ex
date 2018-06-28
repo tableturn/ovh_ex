@@ -32,10 +32,12 @@ defmodule Ovh.Server do
   """
   @spec new(map | nil) :: t | nil
   def new(nil), do: nil
+
   def new(obj) do
     s = %__MODULE__{}
+
     Enum.reduce(@properties, s, fn prop, acc ->
-      %{ acc | prop => Map.get(obj, "#{prop}")}
+      %{acc | prop => Map.get(obj, "#{prop}")}
     end)
   end
 
@@ -50,7 +52,7 @@ defmodule Ovh.Server do
     find(rack: "XXX001")
       Returns servers in rack 'XXX001'
   """
-  @spec find(String.t | Keyword.t) :: [t]
+  @spec find(String.t() | Keyword.t()) :: [t]
   def find(name_or_reverse) when is_binary(name_or_reverse) do
     try do
       Api.Dedicated.Server.get(name_or_reverse)
@@ -65,6 +67,7 @@ defmodule Ovh.Server do
             else
               name_or_reverse <> "."
             end
+
           first(reverse: reverse)
         else
           stacktrace = System.stacktrace()
@@ -72,6 +75,7 @@ defmodule Ovh.Server do
         end
     end
   end
+
   def find(props) when is_list(props) do
     Api.Dedicated.Server.get()
     |> Enum.reduce([], fn service, acc ->
@@ -87,11 +91,13 @@ defmodule Ovh.Server do
 
   For consistency purpose, returns empty list or one-element list
   """
-  @spec first(Keyword.t) :: [t]
+  @spec first(Keyword.t()) :: [t]
   def first(props) do
-    server = Api.Dedicated.Server.get()
-    |> Enum.find_value(nil, &(Api.Dedicated.Server.get(&1) |> filter(props)))
-    |> new()
+    server =
+      Api.Dedicated.Server.get()
+      |> Enum.find_value(nil, &(Api.Dedicated.Server.get(&1) |> filter(props)))
+      |> new()
+
     if server do
       [server]
     else
@@ -115,7 +121,7 @@ defmodule Ovh.Server do
       nil
     end
   end
-  
+
   defp match(obj, props) when is_map(obj) do
     Enum.all?(props, fn {name, value} ->
       case Map.get(obj, "#{name}") do
@@ -125,6 +131,7 @@ defmodule Ovh.Server do
       end
     end)
   end
+
   defp match(_, _), do: false
 
   defp to_list(obj), do: [obj]

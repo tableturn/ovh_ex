@@ -7,7 +7,13 @@ defmodule Ovh.MixProject do
       version: "0.1.0",
       elixir: "~> 1.6",
       start_permanent: Mix.env() == :prod,
-      deps: deps()
+      deps: deps(),
+
+      # Docs
+      name: "ovh.ex",
+      soruce_url: "https://github.com/the-missing-link/ovh_ex",
+      homepage_url: "https://github.com/the-missing-link/ovh_ex",
+      docs: docs()
     ]
   end
 
@@ -22,13 +28,39 @@ defmodule Ovh.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
+      # Dev and test
+      {:credo, "~> 0.9", only: [:dev, :test], runtime: false},
       # Only dev
       {:plug, "~> 1.6", only: [:dev]},
       {:cowboy, "~> 1.0", only: [:dev]},
       {:uuid, "~> 1.1", only: [:dev]},
+      {:earmark, "~> 1.2", only: :dev, runtime: false},
+      {:ex_doc, "~> 0.18", only: :dev, runtime: false},
       # All envs
       {:confex, "~> 3.3"},
       {:poison, "~> 3.1"}
+    ]
+  end
+
+  defp docs do
+    [
+      main: "Ovh",
+      source_url: "https://github.com/the-missing-link/ovh_ex",
+      extras: ["README.md"],
+      groups_for_modules: [
+        "High-level API": [
+          Ovh,
+          Ovh.Api,
+          Ovh.Server
+        ],
+        "Low-level API": [
+          Ovh.Api.Dedicated.Server,
+          Ovh.Api.Dedicated.Server.AuthenticationSecret,
+          Ovh.Api.Dedicated.Server.Boot,
+          Ovh.Api.Dedicated.Server.Boot.Option,
+          Ovh.Api.Dedicated.Server.Reboot
+        ]
+      ]
     ]
   end
 end

@@ -1,10 +1,9 @@
 defmodule Mix.Ovh do
-  @moduledoc """
-  Commons for Ovh.Auth task
-  """
+  @moduledoc false
   @type rule :: {method :: String.t(), path :: String.t()}
 
   defmodule Token do
+    @moduledoc false
     @type t :: %__MODULE__{}
 
     defstruct validation_url: "", consumer_key: ""
@@ -18,6 +17,7 @@ defmodule Mix.Ovh do
   end
 
   defmodule Manager do
+    @moduledoc false
     use GenServer
 
     @doc "Set token"
@@ -57,6 +57,7 @@ defmodule Mix.Ovh do
   end
 
   defmodule Http do
+    @moduledoc false
     use Plug.Router
 
     plug(:match)

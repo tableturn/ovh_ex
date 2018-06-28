@@ -12,6 +12,7 @@ defmodule Ovh.MixProject do
       ],
       deps: deps(),
       package: package(),
+      description: description(),
 
       # Docs
       name: "ovh.ex",
@@ -38,6 +39,12 @@ defmodule Ovh.MixProject do
         "GitHub" => "https://github.com/the-missing-link/ovh_ex"
       }
     ]
+  end
+
+  defp description do
+    """
+    ovh.ex is a wrapper for OVH API
+    """
   end
 
   # Run "mix help deps" to learn about dependencies.

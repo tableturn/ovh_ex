@@ -38,4 +38,12 @@ defmodule Ovh.Api do
   """
   @spec post(Path.t(), api_input, :httpc.http_options(), :httpc.options()) :: api_return
   def post(path, props, http_opts \\ [], opts \\ []), do: do_post(path, props, http_opts, opts)
+
+  @doc """
+  DELETE
+
+  Raise Ovh.Exception if code != 200
+  """
+  @spec delete(Path.t()) :: api_return
+  def delete(path, http_opts \\ [], opts \\ []), do: do_delete(path, http_opts, opts)
 end

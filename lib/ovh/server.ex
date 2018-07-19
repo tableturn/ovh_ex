@@ -114,6 +114,48 @@ defmodule Ovh.Server do
   end
 
   @doc """
+  Creates custom ipxe script
+  """
+  @spec new_custom_ipxe(name :: String.t(), description :: String.t(), script :: String.t()) ::
+          String.t()
+  def new_custom_ipxe(name, description \\ "", script) do
+    ret =
+      Api.post("/me/ipxeScript", %{
+        name: name,
+        description: description,
+        script: script
+      })
+
+    case ret do
+      %{"name" => name} -> name
+      err -> raise "Error creating ipxe script: #{inspect(err)}"
+    end
+  end
+
+  @doc """
+  Set custom ipxe script as boot
+
+  name: as used in new_custom_ipxe/2,3
+  """
+  @spec set_custom_ipxe(t, String.t()) :: t
+  def set_custom_ipxe(server, name) do
+    # Get boot id for this specific server
+    boot =
+      "/dedicated/server/#{server.name}/boot?bootType=ipxeCustomerScript"
+      |> Api.get()
+      |> Enum.find_value(
+        nil,
+        &("/dedicated/server/#{server.name}/boot/#{&1}"
+          |> Api.get()
+          |> find_boot(name))
+      )
+
+    boot_id = Map.get(boot, "bootId")
+    nil = Api.put("/dedicated/server/#{server.name}", %{bootId: boot_id})
+    %{server | bootId: boot_id}
+  end
+
+  @doc """
   Reboot server
   """
   @spec reboot(t) :: :ok
@@ -141,6 +183,9 @@ defmodule Ovh.Server do
   end
 
   defp match(_, _), do: false
+
+  defp find_boot(%{"kernel" => name} = boot, name), do: boot
+  defp find_boot(_, _), do: nil
 
   defp to_list(obj), do: [obj]
 

@@ -27,6 +27,10 @@ defmodule Ovh.Api.Helpers do
     do_request(:post, path, body, http_opts, opts)
   end
 
+  def do_delete(path, http_opts \\ [], opts \\ []) do
+    do_request(:delete, path, nil, http_opts, opts)
+  end
+
   ###
   ### Priv
   ###

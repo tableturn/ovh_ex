@@ -1,0 +1,15 @@
+#!ipxe
+# description: SmartOS latest
+
+echo
+echo Starting SmartOS for ${hostname}
+set base-url <%= base_url %>
+set base-url http://bootstrap.linky.one/boot/smartos-latest/platform/i86pc
+kernel ${base-url}/kernel/amd64/unix
+initrd ${base-url}/amd64/boot_archive
+imgargs unix -B console=text,smartos=true
+boot || 
+# If everything failed, give the user some options
+echo Boot from ${base-url} failed
+prompt --key 0x197e --timeout 2000 Press F12 to investigate || exit
+shell

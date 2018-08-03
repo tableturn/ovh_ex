@@ -3,6 +3,7 @@ defmodule Ovh.Server do
   High level wrapper for dedicated servers
   """
   alias Ovh.Api
+  alias Ovh.Ipxe
 
   @properties [
     :datacenter,
@@ -114,31 +115,10 @@ defmodule Ovh.Server do
   end
 
   @doc """
-  Creates custom ipxe script
-  """
-  @spec new_custom_ipxe(name :: String.t(), description :: String.t(), script :: String.t()) ::
-          String.t()
-  def new_custom_ipxe(name, description \\ "", script) do
-    ret =
-      Api.post("/me/ipxeScript", %{
-        name: name,
-        description: description,
-        script: script
-      })
-
-    case ret do
-      %{"name" => name} -> name
-      err -> raise "Error creating ipxe script: #{inspect(err)}"
-    end
-  end
-
-  @doc """
   Set custom ipxe script as boot
-
-  name: as used in new_custom_ipxe/2,3
   """
-  @spec set_custom_ipxe(t, String.t()) :: t
-  def set_custom_ipxe(server, name) do
+  @spec set_ipxe(t, Ovh.Ipxe.t()) :: t
+  def set_ipxe(server, ipxe) do
     # Get boot id for this specific server
     boot =
       "/dedicated/server/#{server.name}/boot?bootType=ipxeCustomerScript"
@@ -147,12 +127,29 @@ defmodule Ovh.Server do
         nil,
         &("/dedicated/server/#{server.name}/boot/#{&1}"
           |> Api.get()
-          |> find_boot(name))
+          |> find_boot(ipxe.name))
       )
 
     boot_id = Map.get(boot, "bootId")
     nil = Api.put("/dedicated/server/#{server.name}", %{bootId: boot_id})
     %{server | bootId: boot_id}
+  end
+
+  @doc """
+  Set ipxe boot from template
+
+  Override existing boot if exists
+  """
+  @spec set_ipxe_tmpl(t, tmpl :: String.t(), ctx :: Keyword.t()) :: t()
+  def set_ipxe_tmpl(server, tmpl, ctx) do
+    if tmpl in Api.get("/me/ipxeScript") do
+      Api.delete("/me/ixpeScript/#{tmpl}")
+    end
+
+    boot = Ipxe.template(tmpl, ctx)
+
+    _ = Ipxe.create(boot)
+    set_ipxe(server, boot)
   end
 
   @doc """

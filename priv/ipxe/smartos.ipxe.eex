@@ -4,7 +4,6 @@
 echo
 echo Starting SmartOS for ${hostname}
 set base-url <%= base_url %>
-set base-url http://bootstrap.linky.one/boot/smartos-latest/platform/i86pc
 kernel ${base-url}/kernel/amd64/unix
 initrd ${base-url}/amd64/boot_archive
 imgargs unix -B console=text,smartos=true

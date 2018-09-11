@@ -57,7 +57,7 @@ defmodule Ovh.MixProject do
       {:cowboy, "~> 1.0", only: [:dev]},
       {:uuid, "~> 1.1", only: [:dev]},
       {:earmark, "~> 1.2", only: :dev, runtime: false},
-      {:ex_doc, "~> 0.18", only: :dev, runtime: false},
+      {:ex_doc, github: "elixir-lang/ex_doc", only: :dev, runtime: false},
       # All envs
       {:confex, "~> 3.3"},
       {:poison, "~> 3.1"}

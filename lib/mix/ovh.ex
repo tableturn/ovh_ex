@@ -57,7 +57,9 @@ defmodule Mix.Ovh do
   end
 
   defmodule Http do
-    @moduledoc false
+    @moduledoc """
+    Basic HTTP server for Oauth
+    """
     use Plug.Router
 
     plug(:match)

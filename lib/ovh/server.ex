@@ -142,11 +142,16 @@ defmodule Ovh.Server do
   """
   @spec set_ipxe_tmpl(t, tmpl :: String.t(), ctx :: Keyword.t()) :: t()
   def set_ipxe_tmpl(server, tmpl, ctx) do
-    if tmpl in Api.get("/me/ipxeScript") do
-      Api.delete("/me/ixpeScript/#{tmpl}")
+    ipxe_script = "#{tmpl}-#{server.serverId}"
+    
+    if ipxe_script in Api.get("/me/ipxeScript") do
+      Api.delete("/me/ipxeScript/#{ipxe_script}")
     end
 
-    boot = Ipxe.template(tmpl, ctx)
+    boot =
+      tmpl
+      |> Ipxe.template(ctx)
+      |> Map.put(:name, ipxe_script)
 
     _ = Ipxe.create(boot)
     set_ipxe(server, boot)

@@ -55,7 +55,7 @@ defmodule Ovh.Api.Helpers do
         Poison.decode!(body)
 
       {:ok, {{_, code, reason}, _, _}} ->
-        raise Ovh.Exception, {code, reason}
+        raise Ovh.Exception, {code, reason, query}
 
       {:error, err} ->
         raise Ovh.Exception, {:internal, err}

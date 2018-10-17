@@ -12,3 +12,4 @@ boot ||
 echo Boot from ${base-url} failed
 prompt --key 0x197e --timeout 2000 Press F12 to investigate || exit
 shell
+

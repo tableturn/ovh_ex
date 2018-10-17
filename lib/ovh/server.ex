@@ -143,7 +143,7 @@ defmodule Ovh.Server do
   @spec set_ipxe_tmpl(t, tmpl :: String.t(), ctx :: Keyword.t()) :: t()
   def set_ipxe_tmpl(server, tmpl, ctx) do
     ipxe_script = "#{tmpl}-#{server.serverId}"
-    
+
     if ipxe_script in Api.get("/me/ipxeScript") do
       Api.delete("/me/ipxeScript/#{ipxe_script}")
     end

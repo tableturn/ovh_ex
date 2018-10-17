@@ -1,0 +1,15 @@
+#!ipxe
+# description: Linux latest
+
+echo
+echo Starting Linux for ${hostname}
+set base-url <%= base_url %>
+kernel ${base-url}/vmlinuz
+initrd ${base-url}/initrd
+imgargs root=/dev/md1 ro  rootdelay=10 noquiet nosplash
+boot || 
+# If everything failed, give the user some options
+echo Boot from ${base-url} failed
+prompt --key 0x197e --timeout 2000 Press F12 to investigate || exit
+shell
+

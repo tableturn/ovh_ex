@@ -16,8 +16,8 @@ defmodule Ovh.MixProject do
 
       # Docs
       name: "ovh.ex",
-      soruce_url: "https://github.com/the-missing-link/ovh_ex",
-      homepage_url: "https://github.com/the-missing-link/ovh_ex",
+      soruce_url: "https://github.com/tableturn/ovh_ex",
+      homepage_url: "https://github.com/tableturn/ovh_ex",
       docs: docs()
     ]
   end
@@ -36,7 +36,7 @@ defmodule Ovh.MixProject do
       maintainers: ["Jean Parpaillon"],
       licenses: ["Apache 2.0"],
       links: %{
-        "GitHub" => "https://github.com/the-missing-link/ovh_ex"
+        "GitHub" => "https://github.com/tableturn/ovh_ex"
       }
     ]
   end
@@ -67,7 +67,7 @@ defmodule Ovh.MixProject do
   defp docs do
     [
       main: "Ovh",
-      source_url: "https://github.com/the-missing-link/ovh_ex",
+      source_url: "https://github.com/tableturn/ovh_ex",
       extras: ["README.md"]
     ]
   end
